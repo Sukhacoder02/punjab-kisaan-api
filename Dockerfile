@@ -8,4 +8,5 @@ RUN cd /app;npm install
 
 COPY . /app
 WORKDIR /app
+EXPOSE 1313
 ENTRYPOINT [ "npm","start" ]
