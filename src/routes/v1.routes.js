@@ -7,5 +7,6 @@ v1Router.get('/health-check', (req, res) => {
 });
 
 v1Router.post('/users/register', UserController.registerNewUser);
+v1Router.post('/users/login', UserController.loginUser);
 
 module.exports = v1Router;

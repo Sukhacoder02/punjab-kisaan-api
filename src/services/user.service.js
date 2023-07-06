@@ -1,5 +1,6 @@
 const HashingUtils = require('../../utils/Hashing');
 const db = require('../database/models');
+const JWTUtils = require('../../utils/JWT');
 
 const registerNewUser = async (phone, password) => {
   // check if the phone number is already registered
@@ -22,4 +23,21 @@ const registerNewUser = async (phone, password) => {
   return newUser;
 };
 
-module.exports = { registerNewUser };
+const loginUser = async (phone, password) => {
+  // check if the user has registered or not
+  const foundUser = await db.user.findOne({
+    phone
+  });
+  if (!foundUser) {
+    throw new Error('User not found');
+  }
+  // compare the password
+  const isPasswordValid = await HashingUtils.comparePassword(password, foundUser.password);
+  if (!isPasswordValid) {
+    throw new Error('Invalid Password');
+  }
+  const token = JWTUtils.generateToken(foundUser);
+  return token;
+};
+
+module.exports = { registerNewUser, loginUser };
