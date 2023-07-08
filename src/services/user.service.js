@@ -1,8 +1,9 @@
 const HashingUtils = require('../../utils/Hashing');
 const db = require('../database/models');
 const JWTUtils = require('../../utils/JWT');
+const EmailServices = require('../../utils/Email');
 
-const registerNewUser = async (phone, password) => {
+const registerNewUser = async (phone, password, email) => {
   // check if the phone number is already registered
   const foundUser = await db.user.findOne({
     where: {
@@ -19,6 +20,7 @@ const registerNewUser = async (phone, password) => {
   const newUser = await db.user.create({
     phone,
     password: hashedPassword,
+    email
   });
   return newUser;
 };
@@ -40,4 +42,23 @@ const loginUser = async (phone, password) => {
   return token;
 };
 
-module.exports = { registerNewUser, loginUser };
+const sendEmail = async (email, phone, otp) => {
+  // check if the user has registered or not
+  const foundUser = await db.user.findOne({
+    where: {
+      phone
+    }
+  });
+  if (!foundUser) {
+    throw new Error('User not found');
+  }
+  // send an email to the user with a link to reset the password
+  try {
+    const result = await EmailServices.sendEmail(email, otp);
+    return result;
+  } catch (error) {
+    throw error;
+  }
+};
+
+module.exports = { registerNewUser, loginUser, sendEmail };
