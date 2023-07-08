@@ -8,5 +8,6 @@ userRouter.get('/health-check', (req, res) => {
 
 userRouter.post('/users/register', UserController.registerNewUser);
 userRouter.post('/users/login', UserController.loginUser);
+userRouter.post('/users/forgot-password', UserController.forgotPassword);
 
 module.exports = userRouter;
